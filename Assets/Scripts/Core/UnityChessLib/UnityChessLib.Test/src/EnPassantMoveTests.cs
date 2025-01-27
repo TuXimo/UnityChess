@@ -1,0 +1,27 @@
+﻿using NUnit.Framework;
+using UnityChess.Core.UnityChessLib.src.Base;
+using UnityChess.Core.UnityChessLib.src.Pieces;
+
+namespace UnityChess.Test.Core.UnityChessLib.UnityChessLib.Test.src {
+	[TestFixture]
+	public class EnPassantMoveTests {
+		private Board board;
+
+		[SetUp]
+		public void Init() {
+			board = new Board();
+			board.ClearBoard();
+		}
+
+		[Test]
+		public void HandleAssociatedPiece_EnPassantMove_AssocPawnIsRemoved() {
+			Square capturedPawnSquare = new Square(1, 2);
+			board[capturedPawnSquare] = new Pawn(Side.White);
+			EnPassantMove enPassantMove = new EnPassantMove(Square.Invalid, Square.Invalid, capturedPawnSquare);
+
+			enPassantMove.HandleAssociatedPiece(board);
+
+			Assert.AreEqual(null, board[capturedPawnSquare]);
+		}
+	}
+}

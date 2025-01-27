@@ -1,0 +1,44 @@
+﻿using Moq;
+using NUnit.Framework;
+using UnityChess.Core.UnityChessLib.src.Base;
+using UnityChess.Core.UnityChessLib.src.GameSerialization;
+using UnityChess.Core.UnityChessLib.src.Pieces;
+
+namespace UnityChess.Test.Core.UnityChessLib.UnityChessLib.Test.src {
+	[TestFixture]
+	public class GameTests {
+		[Test]
+		[TestCase(0)]
+		[TestCase(1)]
+		[TestCase(10)]
+		[TestCase(40)]
+		[TestCase(64)]
+		public void CalculateAllPiecesLegalMoves_PiecesOnBoard_CalculateLegalMovesCalled(int numberOfPieces) {
+			Mock<Piece> mockPiece = new Mock<Piece>(MockBehavior.Loose, Side.White);
+			Board board = CreateBoard(numberOfPieces, mockPiece);
+
+			Game.CalculateLegalMovesForPosition(board, GameConditions.NormalStartingConditions);
+
+			mockPiece.Verify(
+				piece => piece.CalculateLegalMoves(
+					board,
+					GameConditions.NormalStartingConditions,
+					It.IsAny<Square>()
+				),
+				Times.Exactly(numberOfPieces)
+			);
+		}
+
+		private static Board CreateBoard(int numberOfPieces, Mock<Piece> mockPiece) {
+			Board result = new Board(); 
+			
+			for (int i = 0; i < numberOfPieces; i++) {
+				int file = i / 8 + 1;
+				int rank = i % 8 + 1; 
+				result[file, rank] = mockPiece.Object;
+			}
+
+			return result;
+		}
+	}
+}
